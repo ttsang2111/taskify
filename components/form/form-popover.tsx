@@ -16,6 +16,8 @@ import { X } from "lucide-react";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { Button } from "../ui/button";
 import { ElementRef, useRef } from "react";
+import { FormPicker } from "./form-picker";
+import { useRouter } from "next/navigation";
 
 interface FormPopoverProps {
     children: React.ReactNode;
@@ -29,30 +31,35 @@ export const FormPopover = ({
     side = "bottom",
     align,
     sideOffset = 0
-}: FormPopoverProps) => {
+}: FormPopoverProps
+) => {
+    const router = useRouter();
     const closeRef = useRef<ElementRef<"button">>(null);
+
     const { fieldErrors, execute } = useAction(createBoard, {
         onSuccess: (data) => {
             toast.success(`Board created`)
+            closeRef.current?.click()
+            router.push(`/board/${data.id}`)
         },
         onError: (error) => {
             toast.error(error)
         },
-        onComplete: () => { }
+        onComplete: () => {}
     })
 
     const onSubmit = (formData: FormData) => {
         const title = formData.get('title') as string;
+        const image = formData.get('image') as string;
+            
+        execute({ title, image });
 
-        execute({ title });
     }
-
     return (
         <Popover>
             <PopoverTrigger asChild>
                 {children}
             </PopoverTrigger>
-
             <PopoverContent
                 align={align}
                 className="w-80 pt-3"
@@ -72,17 +79,22 @@ export const FormPopover = ({
                 </PopoverClose>
                 <form action={onSubmit} className="space-y-4">
                     <div className="space-y-4">
+                        <FormPicker 
+                            id ="image"
+                            errors={fieldErrors}
+                        />
                         <FormInput
                             id="title"
                             label="Board title"
                             type="text"
+                            placeholder="Enter a board title"
                             errors={fieldErrors}
                         />
-                        <FormSubmit className="w-full">
-                            Create
-                        </FormSubmit>
                     </div>
-                </form>
+                    <FormSubmit className="w-full">
+                        Create
+                    </FormSubmit>
+            </form>
             </PopoverContent>
         </Popover>
     )
