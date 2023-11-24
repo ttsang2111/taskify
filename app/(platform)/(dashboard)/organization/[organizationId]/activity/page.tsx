@@ -1,9 +1,22 @@
-const ActivityPage = () => (
-    <div className="w-full mb-20">
-        <div className="px-2 md:px-4">
-            Activity Page
-        </div>
-    </div>
-)
 
-export default ActivityPage
+import { Info } from "../_components/info"; 
+import { ActivityList } from "./_components/activity-list";
+import { Suspense } from "react";
+import { Separator } from "@/components/ui/separator";
+import { checkSubscription } from "@/lib/subscription";
+
+const ActivityPage = async () => {
+    const isPro = await checkSubscription();
+
+    return (
+        <div className="w-full">
+        <Info isPro={isPro}/>
+        <Separator className="my-2"/>
+        <Suspense fallback={<ActivityList.Skeleton />}>
+            <ActivityList />
+        </Suspense>
+    </div>
+    )
+}
+
+export default ActivityPage;
