@@ -12,7 +12,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { PopoverClose } from "@radix-ui/react-popover";
-import { decreaseAvailableCount } from "@/lib/org-limit";
 
 interface BoardOptionsProps {
   id: string;
